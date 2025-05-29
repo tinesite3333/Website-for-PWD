@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Edit PWD Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 40px;
+        }
+        .form-container {
+            background-color: white;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        form p {
+            margin-bottom: 15px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+
+        /* Additional styles for You Booked section */
+        .booking-status {
+            margin-top: 50px;
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+        }
+        .booking-status h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .booking {
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .booking p {
+            margin: 5px 0;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .status-approved { color: green; }
+        .status-rejected { color: red; }
+        .status-pending { color: orange; }
+        .status-completed { color: gray; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Edit Your Profile</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save Profile</button>
+        </form>
+    </div>
+
+    <!-- Bookings List Section -->
+    {% if bookings %}
+    <div class="booking-status">
+        <h2>You Booked</h2>
+        {% for booking in bookings %}
+            <div class="booking">
+                <p><strong>Driver you booked:</strong> {{ booking.driver.user.get_full_name|default:booking.driver.user.username }}</p>
+                <p><strong>Vehicle:</strong> {{ booking.driver.vehicle_type }}</p>
+                <p><strong>Pickup:</strong> {{ booking.pickup_location }}</p>
+                <p><strong>Destination:</strong> {{ booking.destination }}</p>
+                <p><strong>Date:</strong> {{ booking.travel_date }} at {{ booking.travel_time }}</p>
+                <p><strong>Status:</strong>
+                    {% if booking.status == 'Approved' %}
+                        <span class="status-approved">Approved ✅</span>
+                    {% elif booking.status == 'Rejected' %}
+                        <span class="status-rejected">Rejected ❌</span>
+                    {% elif booking.status == 'Completed' %}
+                        <span class="status-completed">Completed ✔</span>
+                    {% else %}
+                        <span class="status-pending">Pending ⏳</span>
+                    {% endif %}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="booking-status">
+        <h2>You Booked</h2>
+        <p>You have not made any bookings yet.</p>
+    </div>
+    {% endif %}
+</body>
+</html>

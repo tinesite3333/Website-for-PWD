@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>PWD Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 40px;
+            background-color: #fffde7;
+        }
+        .dashboard {
+            background: #fff8dc;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 18px rgba(0,0,0,0.15);
+            max-width: 750px;
+            margin: auto;
+            text-align: center;
+        }
+        h1 {
+            color: #d4a20f;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+        }
+        .alert {
+            padding: 15px;
+            margin: 25px 0;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .alert.success {
+            background-color: #dff5d1;
+            color: #2e7d32;
+            border-left: 5px solid #2e7d32;
+        }
+        .alert.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border-left: 5px solid #ffc107;
+        }
+        .btn-edit, .btn-book {
+            display: inline-block;
+            background-color: #f1c40f;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 6px 10px rgba(241, 196, 15, 0.4);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin: 20px 10px 0 10px;
+        }
+        .btn-edit:hover, .btn-book:hover {
+            background-color: #d4ac0d;
+            transform: scale(1.05);
+        }
+        .profile-info {
+            text-align: left;
+            background-color: #fef9e7;
+            padding: 25px;
+            margin-top: 35px;
+            border-radius: 14px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .profile-info h2 {
+            color: #b8860b;
+            margin-bottom: 20px;
+        }
+        .profile-info p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #444;
+        }
+        strong {
+            color: #333;
+        }
+        .booking-status {
+            margin-top: 35px;
+            background-color: #f9f9f9;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+        .booking-status h2 {
+            color: #795548;
+            margin-bottom: 20px;
+        }
+        .booking {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 10px;
+            border-left: 5px solid #f1c40f;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .status-approved { color: green; font-weight: bold; }
+        .status-rejected { color: red; font-weight: bold; }
+        .status-pending { color: #f39c12; font-weight: bold; }
+        .status-completed { color: gray; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Welcome to the PWD Dashboard</h1>
+        <p>This is where you will see your transportation bookings and profile info.</p>
+
+        {% if profile_complete %}
+            <div class="alert success">
+                ✅ Your profile is complete.
+            </div>
+        {% else %}
+            <div class="alert warning">
+                ⚠️ Your profile is incomplete. Please complete your profile.
+            </div>
+        {% endif %}
+
+        <a href="{% url 'pwds:edit_profile' %}" class="btn-edit">Edit Profile</a>
+        <a href="{% url 'bookings:create_booking' %}" class="btn-book">Book a Driver</a>
+
+        {% if profile %}
+        <div class="profile-info">
+            <h2>Your Profile Information</h2>
+            <p><strong>Name:</strong> {{ profile.user.get_full_name|default:profile.user.username }}</p>
+            <p><strong>Contact Number:</strong> {{ profile.contact_number|default:"Not provided" }}</p>
+            <p><strong>Disability Type:</strong> {{ profile.disability_type|default:"Not provided" }}</p>
+            <p><strong>Travel Needs:</strong> {{ profile.travel_needs|default:"Not provided" }}</p>
+        </div>
+        {% endif %}
+
+        {% if bookings %}
+        <div class="booking-status">
+            <h2>You Booked</h2>
+            {% for booking in bookings %}
+                <div class="booking">
+                    <p><strong>Driver:</strong> {{ booking.driver.user.get_full_name|default:booking.driver.user.username }}</p>
+                    <p><strong>Vehicle:</strong> {{ booking.driver.vehicle_type }}</p>
+                    <p><strong>Pickup:</strong> {{ booking.pickup_location }}</p>
+                    <p><strong>Destination:</strong> {{ booking.destination }}</p>
+                    <p><strong>Date:</strong> {{ booking.travel_date }} at {{ booking.travel_time }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if booking.status == 'Approved' %}
+                            <span class="status-approved">Approved ✅</span>
+                        {% elif booking.status == 'Rejected' %}
+                            <span class="status-rejected">Rejected ❌</span>
+                        {% elif booking.status == 'Completed' %}
+                            <span class="status-completed">Completed ✔</span>
+                        {% else %}
+                            <span class="status-pending">Pending ⏳</span>
+                        {% endif %}
+                    </p>
+                </div>
+            {% endfor %}
+
+            {% if completed_bookings %}
+    <div class="alert success" style="margin-top: 20px;">
+        <h3>Arrival Notifications</h3>
+        {% for booking in completed_bookings %}
+            <p>✅ You have safely arrived at your destination with driver {{ booking.driver.user.get_full_name|default:booking.driver.user.username }} on {{ booking.travel_date }}.</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+        </div>
+        {% else %}
+            <div class="booking-status">
+                <h2>You Booked</h2>
+                <p>You have not made any bookings yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

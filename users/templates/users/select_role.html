@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Select Role</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #fffbea;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .container {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      overflow: hidden;
+      max-width: 700px;
+    }
+    .left {
+      background: #ffd60a;
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .left h2 {
+      color: #333;
+      font-size: 24px;
+    }
+    .right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px;
+    }
+    .role-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    a {
+      text-decoration: none;
+    }
+    button {
+      background-color: #ffcc00;
+      border: none;
+      color: #333;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #e6b800;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left">
+      <h2>Select your role</h2>
+    </div>
+    <div class="right">
+      <div class="role-buttons">
+        <a href="{% url 'users:signup' %}?role=PWD">
+          <button>Person with Disability</button>
+        </a>
+        <a href="{% url 'users:signup' %}?role=DRIVER">
+          <button>Driver</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
